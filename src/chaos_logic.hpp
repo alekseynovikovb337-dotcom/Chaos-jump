@@ -4,11 +4,10 @@
 
 namespace chaos_jump {
 struct Settings {
-    bool enabled = true;
-    float minForce = 0.45f;
-    float maxForce = 2.75f;
+    float minForce = 0.65f;
+    float maxForce = 1.35f;
     float superChance = 0.08f;
-    float superForce = 4.0f;
+    float superForce = 1.8f;
 };
 
 inline float rollForce(Settings const& settings) {
