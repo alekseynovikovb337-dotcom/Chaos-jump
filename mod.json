@@ -1,5 +1,5 @@
 {
-  "geode": "4.0.0",
+  "geode": "v5.11.2",
   "version": "v1.0.1",
   "id": "alekseynovikovb337.chaos-jump",
   "name": "Chaos Jump",
@@ -7,7 +7,10 @@
   "description": "Randomized jump force and Chaos Jump gameplay tools for Geometry Dash.",
   "repository": "https://github.com/alekseynovikovb337-dotcom/Chaos-jump",
   "tags": ["gameplay", "enhancement"],
-  "gd": "2.2081",
+  "gd": {
+    "android": "2.2081",
+    "win": "2.2081"
+  },
   "settings": {
     "enabled": {
       "name": "Chaos Jump",
