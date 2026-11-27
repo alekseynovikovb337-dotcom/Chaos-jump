@@ -14,7 +14,12 @@ void applyTriggerForce(GJBaseGameLayer* game, float multiplier) {
     if (!game) return;
     auto player = game->m_player1;
     if (!player) return;
-    player->m_yVelocity = std::max(0.0f, player->m_yVelocity) * multiplier;
+    if (player->m_isOnGround) {
+        // Start a jump when the trigger is crossed while grounded.
+        player->m_yVelocity = 10.0f * multiplier;
+    } else {
+        player->m_yVelocity = std::max(0.0f, player->m_yVelocity) * multiplier;
+    }
 }
 
 void registerChaosTriggers() {
