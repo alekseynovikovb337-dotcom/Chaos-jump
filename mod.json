@@ -1,10 +1,10 @@
 {
   "geode": "5.11.2",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "id": "alekseynovikovb337.chaos-jump",
   "name": "Chaos Jump",
   "developer": "alekseynovikovb337-dotcom",
-  "description": "Random, weak, and super jump profiles with configurable gameplay settings.",
+  "description": "Chaos jump gameplay mod with 0–100% jump chances and custom Super, Weak, and Random Jump triggers.",
   "repository": "https://github.com/alekseynovikovb337-dotcom/Chaos-jump",
   "tags": [
     "gameplay",
@@ -83,6 +83,12 @@
       "min": 0.05,
       "max": 1,
       "step": 0.05
+    }
+  },
+  "dependencies": {
+    "user95401.game-objects-factory": {
+      "version": ">=v1.1.2",
+      "importance": "required"
     }
   }
 }
