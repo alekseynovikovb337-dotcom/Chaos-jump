@@ -1,6 +1,6 @@
 #include <Geode/Geode.hpp>
 #include <Geode/modify/PlayerObject.hpp>
-#include <user95401.game-objects-factory/include/main.hpp>
+#include <main.hpp>
 #include "chaos_logic.hpp"
 
 using namespace geode::prelude;
