@@ -1,8 +1,57 @@
 #include <Geode/Geode.hpp>
 #include <Geode/modify/PlayerObject.hpp>
+#include <user95401.game-objects-factory/include/main.hpp>
 #include "chaos_logic.hpp"
 
 using namespace geode::prelude;
+
+namespace {
+constexpr int SUPER_TRIGGER = UNIQ_ID("chaos-jump-super-trigger");
+constexpr int WEAK_TRIGGER = UNIQ_ID("chaos-jump-weak-trigger");
+constexpr int RANDOM_TRIGGER = UNIQ_ID("chaos-jump-random-trigger");
+
+void applyTriggerForce(GJBaseGameLayer* game, float multiplier) {
+    if (!game) return;
+    auto player = game->m_player1;
+    if (!player) return;
+    player->m_yVelocity = std::max(0.0f, player->m_yVelocity) * multiplier;
+}
+
+void registerChaosTriggers() {
+    GameObjectsFactory::registerGameObject(
+        GameObjectsFactory::createTriggerConfig(
+            SUPER_TRIGGER, "edit_eEventLinkBtn_001.png",
+            [](EffectGameObject*, GJBaseGameLayer* game, int, gd::vector<int> const*) {
+                applyTriggerForce(game, 1.8f);
+            }
+        )
+    );
+
+    GameObjectsFactory::registerGameObject(
+        GameObjectsFactory::createTriggerConfig(
+            WEAK_TRIGGER, "edit_eEventLinkBtn_001.png",
+            [](EffectGameObject*, GJBaseGameLayer* game, int, gd::vector<int> const*) {
+                applyTriggerForce(game, 0.35f);
+            }
+        )
+    );
+
+    GameObjectsFactory::registerGameObject(
+        GameObjectsFactory::createTriggerConfig(
+            RANDOM_TRIGGER, "edit_eEventLinkBtn_001.png",
+            [](EffectGameObject*, GJBaseGameLayer* game, int, gd::vector<int> const*) {
+                static thread_local std::mt19937 rng{std::random_device{}()};
+                std::uniform_real_distribution<float> dist(0.5f, 2.2f);
+                applyTriggerForce(game, dist(rng));
+            }
+        )
+    );
+}
+} // namespace
+
+$execute {
+    registerChaosTriggers();
+}
 
 class $modify(ChaosJumpPlayerObject, PlayerObject) {
     void pushButton(PlayerButton button) {
@@ -34,5 +83,5 @@ class $modify(ChaosJumpPlayerObject, PlayerObject) {
 };
 
 $on_mod(Loaded) {
-    log::info("Chaos Jump loaded. Random, weak, and super jump profiles active.");
+    log::info("Chaos Jump loaded: percentage chances and 3 custom trigger types registered.");
 }
