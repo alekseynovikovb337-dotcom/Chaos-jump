@@ -1,6 +1,6 @@
 {
   "geode": "5.11.2",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "id": "alekseynovikovb337.chaos-jump",
   "name": "Chaos Jump",
   "developer": "alekseynovikovb337-dotcom",
@@ -50,12 +50,12 @@
     },
     "super-chance": {
       "name": "Super jump chance",
-      "description": "Chance of a super jump, from 0 to 1.",
+      "description": "Chance in percent (0–100).",
       "type": "float",
-      "default": 0.08,
+      "default": 8,
       "min": 0,
-      "max": 1,
-      "step": 0.01
+      "max": 100,
+      "step": 1
     },
     "super-force": {
       "name": "Super jump force",
@@ -68,12 +68,12 @@
     },
     "weak-chance": {
       "name": "Weak jump chance",
-      "description": "Chance of a short, low-force jump.",
+      "description": "Chance in percent (0–100).",
       "type": "float",
-      "default": 0.12,
+      "default": 12,
       "min": 0,
-      "max": 1,
-      "step": 0.01
+      "max": 100,
+      "step": 1
     },
     "weak-force": {
       "name": "Weak jump force",
