@@ -37,4 +37,4 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${game_objects_factory_SOURCE_DIR}/include
 )
 
-setup_geode_mod(${PROJECT_NAME} EXTERNALS user95401.game-objects-factory:>=1.1.2)
+setup_geode_mod(${PROJECT_NAME} EXTERNALS user95401.game-objects-factory:1.1.2)
