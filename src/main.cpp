@@ -27,7 +27,7 @@ void registerChaosTriggers() {
     GameObjectsFactory::registerGameObject(
         GameObjectsFactory::createTriggerConfig(
             SUPER_TRIGGER, "edit_eEventLinkBtn_001.png",
-            [](EffectGameObject*, GJBaseGameLayer* game, int, std::vector<int> const*) {
+            [](EffectGameObject*, GJBaseGameLayer* game, int, gd::vector<int> const*) {
                 applyTriggerForce(game, 1.8f);
             }
         )
@@ -36,7 +36,7 @@ void registerChaosTriggers() {
     GameObjectsFactory::registerGameObject(
         GameObjectsFactory::createTriggerConfig(
             WEAK_TRIGGER, "edit_eEventLinkBtn_001.png",
-            [](EffectGameObject*, GJBaseGameLayer* game, int, std::vector<int> const*) {
+            [](EffectGameObject*, GJBaseGameLayer* game, int, gd::vector<int> const*) {
                 applyTriggerForce(game, 0.35f);
             }
         )
@@ -45,7 +45,7 @@ void registerChaosTriggers() {
     GameObjectsFactory::registerGameObject(
         GameObjectsFactory::createTriggerConfig(
             RANDOM_TRIGGER, "edit_eEventLinkBtn_001.png",
-            [](EffectGameObject*, GJBaseGameLayer* game, int, std::vector<int> const*) {
+            [](EffectGameObject*, GJBaseGameLayer* game, int, gd::vector<int> const*) {
                 static thread_local std::mt19937 rng{std::random_device{}()};
                 std::uniform_real_distribution<float> dist(0.5f, 2.2f);
                 applyTriggerForce(game, dist(rng));
