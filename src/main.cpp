@@ -72,10 +72,29 @@ void addForceEditor(
     controls->addChild(plus);
 }
 
+bool loadChaosEventIcons() {
+    auto path = (Mod::get()->getResourcesDir() / "chaos_jump_events.png").string();
+    auto texture = CCTextureCache::sharedTextureCache()->addImage(path.c_str(), false);
+    if (!texture) {
+        log::error("Chaos Jump: failed to load custom event icon sheet: {}", path);
+        return false;
+    }
+    auto cache = CCSpriteFrameCache::get();
+    const char* names[] = {"chaos_super_jump.png", "chaos_weak_jump.png", "chaos_random_jump.png"};
+    for (int i = 0; i < 3; ++i) {
+        auto frame = CCSpriteFrame::createWithTexture(texture, CCRectMake(static_cast<float>(i * 48), 0.f, 48.f, 48.f));
+        if (!frame) {
+            log::error("Chaos Jump: could not create custom icon frame {}", names[i]);
+            return false;
+        }
+        cache->addSpriteFrame(frame, names[i]);
+    }
+    return true;
+}
 void registerChaosTriggers() {
     GameObjectsFactory::registerGameObject(
         GameObjectsFactory::createTriggerConfig(
-            SUPER_TRIGGER, "edit_eJumpBtn_001.png",
+            SUPER_TRIGGER, "chaos_super_jump.png",
             [](EffectGameObject* trigger, GJBaseGameLayer* game, int, gd::vector<int> const*) {
                 const float force = trigger && trigger->m_duration > 0.f ? trigger->m_duration : 1.8f;
                 applyTriggerForce(game, force);
@@ -88,7 +107,7 @@ void registerChaosTriggers() {
 
     GameObjectsFactory::registerGameObject(
         GameObjectsFactory::createTriggerConfig(
-            WEAK_TRIGGER, "edit_eColorBtn_001.png",
+            WEAK_TRIGGER, "chaos_weak_jump.png",
             [](EffectGameObject* trigger, GJBaseGameLayer* game, int, gd::vector<int> const*) {
                 const float force = trigger && trigger->m_duration > 0.f ? trigger->m_duration : 0.35f;
                 applyTriggerForce(game, force);
@@ -101,7 +120,7 @@ void registerChaosTriggers() {
 
     GameObjectsFactory::registerGameObject(
         GameObjectsFactory::createTriggerConfig(
-            RANDOM_TRIGGER, "edit_eMoveBtn_001.png",
+            RANDOM_TRIGGER, "chaos_random_jump.png",
             [](EffectGameObject* trigger, GJBaseGameLayer* game, int, gd::vector<int> const*) {
                 const float maxForce = trigger && trigger->m_duration > 0.f ? trigger->m_duration : 2.2f;
                 static thread_local std::mt19937 rng{std::random_device{}()};
@@ -116,9 +135,6 @@ void registerChaosTriggers() {
 }
 } // namespace
 
-$execute {
-    registerChaosTriggers();
-}
 
 class $modify(ChaosJumpPlayerObject, PlayerObject) {
     void pushButton(PlayerButton button) {
@@ -146,5 +162,10 @@ class $modify(ChaosJumpPlayerObject, PlayerObject) {
 };
 
 $on_mod(Loaded) {
-    log::info("Chaos Jump loaded: configurable Super, Weak and Random Jump triggers registered.");
+    if (loadChaosEventIcons()) {
+        registerChaosTriggers();
+        log::info("Chaos Jump loaded: custom event icons and editable Super, Weak and Random Jump triggers registered.");
+    } else {
+        log::error("Chaos Jump: custom trigger registration skipped because icon resources failed to load.");
+    }
 }
