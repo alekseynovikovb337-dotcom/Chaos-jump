@@ -1,0 +1,24 @@
+name: Build Chaos Jump
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  android:
+    name: Android arm64
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build Geode mod
+        uses: geode-sdk/build-geode-mod@main
+        id: build
+        with:
+          sdk: latest
+          target: Android64
+      - uses: actions/upload-artifact@v7
+        with:
+          name: Chaos-Jump-Android64
+          path: ${{ steps.build.outputs.build-output }}/*.geode
