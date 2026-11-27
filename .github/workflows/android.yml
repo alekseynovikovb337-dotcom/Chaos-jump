@@ -16,7 +16,8 @@ jobs:
         uses: geode-sdk/build-geode-mod@main
         id: build
         with:
-          sdk: latest
+          # Keep SDK aligned with mod.json and Geometry Dash 2.2081.
+          sdk: v5.11.2
           target: Android64
       - uses: actions/upload-artifact@v7
         with:
