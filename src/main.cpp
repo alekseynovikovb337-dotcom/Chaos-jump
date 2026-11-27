@@ -6,10 +6,10 @@ using namespace geode::prelude;
 
 class $modify(ChaosJumpPlayerObject, PlayerObject) {
     void pushButton(PlayerButton button) {
-        const bool wasOnGround = m_onGround;
+        const bool wasOnGround = m_isOnGround;
         PlayerObject::pushButton(button);
 
-        if (button != PlayerButton::Jump || !wasOnGround || m_onGround) {
+        if (button != PlayerButton::Jump || !wasOnGround || m_isOnGround) {
             return;
         }
 
