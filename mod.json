@@ -1,12 +1,15 @@
 {
   "geode": "5.11.2",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "id": "alekseynovikovb337.chaos-jump",
   "name": "Chaos Jump",
   "developer": "alekseynovikovb337-dotcom",
-  "description": "Randomized jump force and Chaos Jump gameplay tools for Geometry Dash.",
+  "description": "Random, weak, and super jump profiles with configurable gameplay settings.",
   "repository": "https://github.com/alekseynovikovb337-dotcom/Chaos-jump",
-  "tags": ["gameplay", "enhancement"],
+  "tags": [
+    "gameplay",
+    "enhancement"
+  ],
   "gd": {
     "android": "2.2081",
     "win": "2.2081"
@@ -22,9 +25,9 @@
       "name": "Intensity",
       "description": "0 = vanilla jump, 1 = full random force, 2 = extra chaotic.",
       "type": "float",
-      "default": 1.0,
-      "min": 0.0,
-      "max": 2.0,
+      "default": 1,
+      "min": 0,
+      "max": 2,
       "step": 0.1
     },
     "min-force": {
@@ -33,7 +36,7 @@
       "type": "float",
       "default": 0.65,
       "min": 0.1,
-      "max": 3.0,
+      "max": 3,
       "step": 0.05
     },
     "max-force": {
@@ -42,7 +45,7 @@
       "type": "float",
       "default": 1.35,
       "min": 0.1,
-      "max": 5.0,
+      "max": 5,
       "step": 0.05
     },
     "super-chance": {
@@ -50,8 +53,8 @@
       "description": "Chance of a super jump, from 0 to 1.",
       "type": "float",
       "default": 0.08,
-      "min": 0.0,
-      "max": 1.0,
+      "min": 0,
+      "max": 1,
       "step": 0.01
     },
     "super-force": {
@@ -59,9 +62,27 @@
       "description": "Multiplier used for super jumps.",
       "type": "float",
       "default": 1.8,
-      "min": 1.0,
-      "max": 8.0,
+      "min": 1,
+      "max": 8,
       "step": 0.1
+    },
+    "weak-chance": {
+      "name": "Weak jump chance",
+      "description": "Chance of a short, low-force jump.",
+      "type": "float",
+      "default": 0.12,
+      "min": 0,
+      "max": 1,
+      "step": 0.01
+    },
+    "weak-force": {
+      "name": "Weak jump force",
+      "description": "Multiplier for weak jumps.",
+      "type": "float",
+      "default": 0.35,
+      "min": 0.05,
+      "max": 1,
+      "step": 0.05
     }
   }
 }
