@@ -21,6 +21,8 @@ class $modify(ChaosJumpPlayerObject, PlayerObject) {
         settings.maxForce = mod->getSettingValue<float>("max-force");
         settings.superChance = mod->getSettingValue<float>("super-chance");
         settings.superForce = mod->getSettingValue<float>("super-force");
+        settings.weakChance = mod->getSettingValue<float>("weak-chance");
+        settings.weakForce = mod->getSettingValue<float>("weak-force");
 
         const float intensity = std::clamp(
             mod->getSettingValue<float>("intensity"), 0.0f, 2.0f
@@ -32,5 +34,5 @@ class $modify(ChaosJumpPlayerObject, PlayerObject) {
 };
 
 $on_mod(Loaded) {
-    log::info("Chaos Jump loaded. Random jump force hook active.");
+    log::info("Chaos Jump loaded. Random, weak, and super jump profiles active.");
 }
