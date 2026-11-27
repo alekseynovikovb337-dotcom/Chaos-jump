@@ -30,40 +30,46 @@ void addForceEditor(
     float maxValue,
     float step
 ) {
-    if (!popup || !popup->m_buttonMenu || !popup->m_mainLayer || !trigger) return;
+    if (!popup || !popup->m_mainLayer || !trigger) return;
     if (trigger->m_duration <= 0.f) trigger->m_duration = defaultValue;
 
+    // Keep the controls in one coordinate space. The old code mixed
+    // mainLayer coordinates with buttonMenu coordinates, placing controls
+    // outside the visible/editable part of the popup on Android.
     auto size = popup->m_mainLayer->getContentSize();
+    auto controls = CCMenu::create();
+    controls->setPosition({size.width / 2.f, size.height / 2.f});
+    popup->m_mainLayer->addChild(controls, 100);
+
+    const float rowY = -size.height / 2.f + 42.f;
     auto label = CCLabelBMFont::create("", "bigFont.fnt");
     label->setScale(0.42f);
-    label->setPosition({size.width / 2.f, 42.f});
-    popup->m_mainLayer->addChild(label, 10);
+    label->setAnchorPoint({0.5f, 0.5f});
+    label->setPosition({0.f, rowY + 28.f});
+    controls->addChild(label);
 
-    auto refresh = [=]() {
+    auto refresh = [label, trigger, title]() {
         label->setString(fmt::format("{}: {:.2f}x", title, trigger->m_duration).c_str());
     };
     refresh();
 
-    auto minus = CCMenuItemExt::createSpriteExtra(
-        CCLabelBMFont::create("-", "bigFont.fnt"),
-        [=](auto*) {
-            trigger->m_duration = std::max(minValue, trigger->m_duration - step);
-            refresh();
-        }
-    );
-    auto plus = CCMenuItemExt::createSpriteExtra(
-        CCLabelBMFont::create("+", "bigFont.fnt"),
-        [=](auto*) {
-            trigger->m_duration = std::min(maxValue, trigger->m_duration + step);
-            refresh();
-        }
-    );
-    minus->setScale(0.55f);
-    plus->setScale(0.55f);
-    minus->setPosition({size.width / 2.f - 65.f, 42.f});
-    plus->setPosition({size.width / 2.f + 65.f, 42.f});
-    popup->m_buttonMenu->addChild(minus);
-    popup->m_buttonMenu->addChild(plus);
+    auto minusLabel = CCLabelBMFont::create("-", "bigFont.fnt");
+    auto plusLabel = CCLabelBMFont::create("+", "bigFont.fnt");
+    auto minus = CCMenuItemExt::createSpriteExtra(minusLabel, [=](auto*) {
+        trigger->m_duration = std::max(minValue, trigger->m_duration - step);
+        refresh();
+    });
+    auto plus = CCMenuItemExt::createSpriteExtra(plusLabel, [=](auto*) {
+        trigger->m_duration = std::min(maxValue, trigger->m_duration + step);
+        refresh();
+    });
+
+    minus->setScale(0.7f);
+    plus->setScale(0.7f);
+    minus->setPosition({-78.f, rowY});
+    plus->setPosition({78.f, rowY});
+    controls->addChild(minus);
+    controls->addChild(plus);
 }
 
 void registerChaosTriggers() {
