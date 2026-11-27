@@ -12,43 +12,98 @@ constexpr int WEAK_TRIGGER = UNIQ_ID("chaos-jump-weak-trigger");
 constexpr int RANDOM_TRIGGER = UNIQ_ID("chaos-jump-random-trigger");
 
 void applyTriggerForce(GJBaseGameLayer* game, float multiplier) {
-    if (!game) return;
+    if (!game || !game->m_player1) return;
     auto player = game->m_player1;
-    if (!player) return;
     if (player->m_isOnGround) {
-        // Start a jump when the trigger is crossed while grounded.
         player->m_yVelocity = 10.0f * multiplier;
     } else {
         player->m_yVelocity = std::max(0.0f, static_cast<float>(player->m_yVelocity)) * multiplier;
     }
 }
 
+void addForceEditor(
+    EditTriggersPopup* popup,
+    EffectGameObject* trigger,
+    const char* title,
+    float defaultValue,
+    float minValue,
+    float maxValue,
+    float step
+) {
+    if (!popup || !popup->m_buttonMenu || !popup->m_mainLayer || !trigger) return;
+    if (trigger->m_duration <= 0.f) trigger->m_duration = defaultValue;
+
+    auto size = popup->m_mainLayer->getContentSize();
+    auto label = CCLabelBMFont::create("", "bigFont.fnt");
+    label->setScale(0.42f);
+    label->setPosition({size.width / 2.f, 42.f});
+    popup->m_mainLayer->addChild(label, 10);
+
+    auto refresh = [=]() {
+        label->setString(fmt::format("{}: {:.2f}x", title, trigger->m_duration).c_str());
+    };
+    refresh();
+
+    auto minus = CCMenuItemExt::createSpriteExtra(
+        CCLabelBMFont::create("-", "bigFont.fnt"),
+        [=](auto*) {
+            trigger->m_duration = std::max(minValue, trigger->m_duration - step);
+            refresh();
+        }
+    );
+    auto plus = CCMenuItemExt::createSpriteExtra(
+        CCLabelBMFont::create("+", "bigFont.fnt"),
+        [=](auto*) {
+            trigger->m_duration = std::min(maxValue, trigger->m_duration + step);
+            refresh();
+        }
+    );
+    minus->setScale(0.55f);
+    plus->setScale(0.55f);
+    minus->setPosition({size.width / 2.f - 65.f, 42.f});
+    plus->setPosition({size.width / 2.f + 65.f, 42.f});
+    popup->m_buttonMenu->addChild(minus);
+    popup->m_buttonMenu->addChild(plus);
+}
+
 void registerChaosTriggers() {
     GameObjectsFactory::registerGameObject(
         GameObjectsFactory::createTriggerConfig(
-            SUPER_TRIGGER, "edit_eEventLinkBtn_001.png",
-            [](EffectGameObject*, GJBaseGameLayer* game, int, gd::vector<int> const*) {
-                applyTriggerForce(game, 1.8f);
+            SUPER_TRIGGER, "edit_eJumpBtn_001.png",
+            [](EffectGameObject* trigger, GJBaseGameLayer* game, int, gd::vector<int> const*) {
+                const float force = trigger && trigger->m_duration > 0.f ? trigger->m_duration : 1.8f;
+                applyTriggerForce(game, force);
+            },
+            [](EditTriggersPopup* popup, EffectGameObject* trigger, CCArray*) {
+                addForceEditor(popup, trigger, "Super Jump", 1.8f, 1.0f, 8.0f, 0.1f);
             }
         )
     );
 
     GameObjectsFactory::registerGameObject(
         GameObjectsFactory::createTriggerConfig(
-            WEAK_TRIGGER, "edit_eEventLinkBtn_001.png",
-            [](EffectGameObject*, GJBaseGameLayer* game, int, gd::vector<int> const*) {
-                applyTriggerForce(game, 0.35f);
+            WEAK_TRIGGER, "edit_eColorBtn_001.png",
+            [](EffectGameObject* trigger, GJBaseGameLayer* game, int, gd::vector<int> const*) {
+                const float force = trigger && trigger->m_duration > 0.f ? trigger->m_duration : 0.35f;
+                applyTriggerForce(game, force);
+            },
+            [](EditTriggersPopup* popup, EffectGameObject* trigger, CCArray*) {
+                addForceEditor(popup, trigger, "Weak Jump", 0.35f, 0.05f, 1.0f, 0.05f);
             }
         )
     );
 
     GameObjectsFactory::registerGameObject(
         GameObjectsFactory::createTriggerConfig(
-            RANDOM_TRIGGER, "edit_eEventLinkBtn_001.png",
-            [](EffectGameObject*, GJBaseGameLayer* game, int, gd::vector<int> const*) {
+            RANDOM_TRIGGER, "edit_eMoveBtn_001.png",
+            [](EffectGameObject* trigger, GJBaseGameLayer* game, int, gd::vector<int> const*) {
+                const float maxForce = trigger && trigger->m_duration > 0.f ? trigger->m_duration : 2.2f;
                 static thread_local std::mt19937 rng{std::random_device{}()};
-                std::uniform_real_distribution<float> dist(0.5f, 2.2f);
+                std::uniform_real_distribution<float> dist(0.5f, maxForce);
                 applyTriggerForce(game, dist(rng));
+            },
+            [](EditTriggersPopup* popup, EffectGameObject* trigger, CCArray*) {
+                addForceEditor(popup, trigger, "Random max", 2.2f, 0.5f, 8.0f, 0.1f);
             }
         )
     );
@@ -64,9 +119,7 @@ class $modify(ChaosJumpPlayerObject, PlayerObject) {
         const bool wasOnGround = m_isOnGround;
         PlayerObject::pushButton(button);
 
-        if (button != PlayerButton::Jump || !wasOnGround || m_isOnGround) {
-            return;
-        }
+        if (button != PlayerButton::Jump || !wasOnGround || m_isOnGround) return;
 
         auto mod = Mod::get();
         if (!mod->getSettingValue<bool>("enabled")) return;
@@ -79,9 +132,7 @@ class $modify(ChaosJumpPlayerObject, PlayerObject) {
         settings.weakChance = mod->getSettingValue<float>("weak-chance");
         settings.weakForce = mod->getSettingValue<float>("weak-force");
 
-        const float intensity = std::clamp(
-            mod->getSettingValue<float>("intensity"), 0.0f, 2.0f
-        );
+        const float intensity = std::clamp(mod->getSettingValue<float>("intensity"), 0.0f, 2.0f);
         const float rolled = chaos_jump::rollForce(settings);
         const float multiplier = 1.0f + (rolled - 1.0f) * intensity;
         m_yVelocity *= std::max(0.05f, multiplier);
@@ -89,5 +140,5 @@ class $modify(ChaosJumpPlayerObject, PlayerObject) {
 };
 
 $on_mod(Loaded) {
-    log::info("Chaos Jump loaded: percentage chances and 3 custom trigger types registered.");
+    log::info("Chaos Jump loaded: configurable Super, Weak and Random Jump triggers registered.");
 }
