@@ -1,0 +1,14 @@
+{
+  "geode": "4.0.0",
+  "version": "v1.0.0",
+  "id": "alekseynovikovb337.chaos-jump",
+  "name": "Chaos Jump",
+  "developer": "alekseynovikovb337-dotcom",
+  "description": "Randomized jump force and Chaos Jump gameplay tools for Geometry Dash.",
+  "repository": "https://github.com/alekseynovikovb337-dotcom/Chaos-jump",
+  "tags": [
+    "gameplay",
+    "enhancement"
+  ],
+  "gd": "2.2081"
+}
