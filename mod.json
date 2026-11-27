@@ -84,11 +84,5 @@
       "max": 1,
       "step": 0.05
     }
-  },
-  "dependencies": {
-    "user95401.game-objects-factory": {
-      "version": "1.1.2",
-      "importance": "required"
-    }
   }
 }
